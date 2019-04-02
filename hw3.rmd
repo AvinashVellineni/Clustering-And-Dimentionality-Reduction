@@ -1,0 +1,427 @@
+---
+title: "CS 422 Section 01"
+output: html_notebook
+author: "Avinash Vellineni - A20406657"
+---
+
+## Assignment 3
+
+### Problem 2.1
+
+### Data Cleaning 
+
+### Question 2.1-A-i
+
+I didn't omit any attributes from the dataset. All of the attributes are considered for clustering.
+
+### Question 2.1-A-ii
+
+The dataset dosen't need to be standardized. All the observation values lie in the range[0-8].
+
+### Question 2.1-A-iii
+
+The data is cleaned to remove multiple spaces and  comma character is made as the delimiter.The cleaned dataset is uploaded as part of the assignmnet submission.
+
+### Clustering
+
+### Question 2.1-B-i
+
+```{r}
+rm(list=ls())
+setwd("E:/IIT CHICAGO STUDIES/IIT Chicago semester 2/Data Mining/Assignments/Assignmnet3")
+library(factoextra)
+library(cluster)
+library(fpc)
+library(ggplot2)
+```
+
+```{r}
+mammals <- read.csv("file19.csv",sep=",", header=T,row.names = 1)
+head(mammals)
+summary(mammals)
+```
+
+```{r}
+fviz_nbclust(mammals, kmeans, method="wss")
+```
+
+```{r}
+fviz_nbclust(mammals, kmeans, method="silhouette")
+```
+
+On determining the WSS graph and silhouette graph,I am selecting the number of clusters to be 7 as there is not much decrease in total within sum of squares after k=7 (No of clusters).
+
+### Question 2.1-B-ii
+
+```{r}
+mammals_km_7 <- kmeans(mammals,centers=7)
+fviz_cluster(mammals_km_7, data=mammals, main="Dentition of mammals clustering with 7 centroids")
+```
+
+### Question 2.1-B-iii
+
+```{r}
+names(mammals_km_7)
+```
+
+```{r}
+cat("Number of observations in each cluster are: ",mammals_km_7$size)
+```
+
+### Question 2.1-B-iv
+
+```{r}
+cat("Total SSE of the cluster is: ",mammals_km_7$totss)
+```
+
+
+### Question 2.1-B-v
+
+```{r}
+cat("SSE of each cluster are: ",mammals_km_7$withinss)
+```
+
+### Question 2.1-B-vi
+
+```{r}
+which(mammals_km_7$cluster == 1)
+```
+
+
+```{r}
+which(mammals_km_7$cluster == 2)
+```
+
+
+```{r}
+which(mammals_km_7$cluster == 3)
+```
+
+```{r}
+which(mammals_km_7$cluster == 4)
+```
+
+```{r}
+which(mammals_km_7$cluster == 5)
+```
+
+```{r}
+which(mammals_km_7$cluster == 6)
+```
+
+```{r}
+which(mammals_km_7$cluster == 7)
+```
+
+Cluster 1 --- Mammals in cluster 1 have atleast 1 top incisors , exactly 1 bottom incisors, zero top canines, zero bottom canines, atleast 1 top premolars & bottom premolars and exactly 3 top molars & bottom molars.
+
+Cluster 2 --- Mammals in cluster 2 have exactly 3 top incisors, 3 or 2 bottom incisors, exactly 1 top canines  & bottom canines, exactly 1 top molars and 1 or 2 bottom molars.
+
+Cluster 3 --- Mammals in cluster 3 have exactly zero top craines,bottom craines,top premolars and bottom premolars.
+
+Cluster 4 --- Mammals in cluster 4 have exactly 1 top canines and bottom canines with 1 or 2 bottom incisors which is unique compared to other mammals.
+
+Cluster 5 --- Mammals in cluster 5 have exactly zero top incisors and 4 bottom incisors.
+
+Cluster 6 --- Mammals in cluster 6 have 1 or 3 or 5 top incisors, 2 or 3 or 4 bottom incisors , exactly 1 top craines, 0 or 1 bottom craines, 3 or 4 top and bottom premolars and 2 or 3 or 4 top and bottom molars.
+
+Cluster 7 --- Mammals in cluster 7 have exactly 1 top and bottom canines ,exactly 3 top & bottom molars and leass than 4 top & bottom premolars.
+
+Since the mammals are divided uniquely according to their tooth pattern(top incisors,bottom incisors,top canines,bottom canines,top premolars,bottom premolars,top molars,and bottom molars) among the clusters as stated above, the clustering of the mammals into 7 clusters makes sense.
+
+### Problem 2.2
+
+###  Hierarchical clustering 
+
+### Question 2.2-A
+
+```{r}
+Languages <- read.csv("file46.txt",comment.char = "#",sep=",",header=T,row.names=1)
+head(Languages)
+summary(Languages)
+```
+
+```{r}
+H_cluster_single <- eclust(Languages,FUNcluster="hclust",hc_method="single")
+```
+
+```{r}
+
+fviz_dend(H_cluster_single,main="Single Dendogram",show_labels = TRUE,palette ="aaas",cex=0.8,labels_track_height=50,xlab = "Country")
+```
+
+```{r}
+H_cluster_complete <- eclust(Languages,FUNcluster="hclust",hc_method="complete")
+fviz_dend(H_cluster_complete,main="Complete Dendogram",show_labels = TRUE,xlab = "Country",palette ="jco",cex=0.8,labels_track_height=60)
+```
+
+```{r}
+H_cluster_average <- eclust(Languages,FUNcluster="hclust",hc_method="average")
+fviz_dend(H_cluster_average,main="Average Dendogram",show_labels = TRUE,xlab = "Country",palette ="ucscgb",cex=0.8,labels_track_height=60)
+```
+
+### Question 2.2-B
+
+####Single Linkage:
+{Denmark, Norway} , {France, Belgium} , {Luxemburg, Switzerland} , {West Germany, Austria} , {Great Britain, Ireland}
+
+####Compete Linkage:
+{France, Belgium} , {Great Britain, Ireland} , {Denmark, Norway} , {Luxemburg, Switzeland} , {West Germany, Austria}
+
+####Average Linkage:
+{Great Britain, Ireland} , {Denmark, Norway} , {Belgium, France} , {Luemburg, Switzerland} , {West Germany, Austria} , {Portugal, Spain}
+
+### Question 2.2-C
+
+From raw data we can observe that Italy and france share common similarity (i.e) most of the people in Italy speaks italian and few speak french  which is similar to country France where most of the people speak french and few speak Italian and that is visible from complete cluster linkage.So complete cluster is best cluster for italy based on my interpretation of results.
+
+### Question 2.2-D
+
+Average Linkage method exhibits the most two-singleton clusters(6).
+
+### Question 2.2-E
+
+```{r}
+H_average_125 <- cutree(H_cluster_average,h=125)
+table(H_average_125)
+```
+
+```{r}
+names(H_average_125)
+```
+
+There are 7 clusters if the split is made at a height 125.
+
+### Question 2.2-F
+
+```{r}
+H_cluster_single_re <- eclust(Languages,k=7,FUNcluster="hclust",hc_method="single")
+fviz_dend(H_cluster_single_re,main="Single Dendogram with 7 clusters",show_labels = TRUE,xlab = "Country",cex=0.8,labels_track_height=50)
+```
+
+
+```{r}
+H_cluster_complete_re <- eclust(Languages,k=7,FUNcluster="hclust",hc_method="complete")
+fviz_dend(H_cluster_complete_re,main="Complete Dendogram with 7 clusters",show_labels = TRUE,xlab = "Country",cex=0.7,labels_track_height=50)
+```
+
+```{r}
+H_cluster_average_re <- eclust(Languages,k=7,FUNcluster="hclust",hc_method="average")
+fviz_dend(H_cluster_average_re,main="Average Dendogram with 7 clusters",show_labels = TRUE,xlab = "Country",cex=0.7,labels_track_height=50)
+```
+
+### Question 2.2-G
+
+```{r}
+options(digits=5)
+stats_cluster_single <- cluster.stats(dist(Languages),H_cluster_single_re$cluster)
+names(stats_cluster_single)
+```
+
+```{r}
+cat("Dunn index for Single Linkage with 7 clusters is :",stats_cluster_single$dunn)
+```
+
+```{r}
+cat("Average Silhouette width for Single Linkage with 7 clusters is :",stats_cluster_single$avg.silwidth)
+```
+
+```{r}
+stats_cluster_complete <- cluster.stats(dist(Languages),H_cluster_complete_re$cluster)
+cat("Dunn index for Complete Linkage with 7 clusters is :",stats_cluster_complete$dunn)
+```
+
+```{r}
+cat("Average Silhouette width for Complete Linkage with 7 clusters is :",stats_cluster_complete$avg.silwidth)
+```
+
+```{r}
+stats_cluster_average <- cluster.stats(dist(Languages),H_cluster_average_re$cluster)
+cat("Dunn index for Average Linkage with 7 clusters is :",stats_cluster_average$dunn)
+```
+
+```{r}
+cat("Average Silhouette width for Average Linkage with 7 clusters is :",stats_cluster_average$avg.silwidth)
+```
+
+### Question 2.2-H
+
+According to above dunn values Average cluster is the best cluster as it has the highest dunn value of 0.80735.
+
+### Question 2.2-I
+
+According to above Silhouette width values Complete Cluster is the best cluster as it has the highest Silhouette width value of 0.19223.
+
+### Problem 2.3
+
+### Principal Component Analysis
+
+### Question 2.3-A-i
+
+```{r}
+library(tidyverse)
+HTRU_2data <- read.csv("HTRU_2-small.csv",header = TRUE,sep=",")
+head(HTRU_2data)
+```
+
+```{r}
+pca <- prcomp(scale(HTRU_2data[,1:8]))
+pca
+names(pca)
+```
+
+```{r}
+pca$sdev
+```
+
+```{r}
+pca$rotation <- -pca$rotation
+pca$rotation 
+```
+
+```{r}
+pca$x <- -pca$x
+head(pca$x)
+```
+
+```{r}
+biplot(pca, scale=0)
+summary(pca)
+```
+
+```{r}
+screeplot(pca,type = 'l')
+```
+
+Cumulative variance explained by the first two principle components is 78.5%.
+
+### Question 2.3-A-ii
+
+```{r}
+ggplot(data = HTRU_2data, mapping = aes(x = pca$x[,1], y = pca$x[,2], colour = class)) + 
+geom_point() + labs(x="PC1",y="PC2",colour="class")
+```
+
+### Question 2.3-A-iii
+
+From the biplot and ggplot we can infer that there is a clear disction between the two classes.Most of the class 0 data points lie on the range [2.5 to -7].The data points with class 1 lie only on the positive side of PC1. The data points with class label 1 have higher skewness and kurtosis.Excess skewness and kurtosis of the DM-SNR curve show for data points with class label 0. We can also observe that we have less number of observations of class 1 than class 0 and data points of class 0 are more dense than class 1. The data points which lie on the negative side of PC2 tend to have higher skewness and kurtosis and data points on the positive side of PC2 tend to have higher mean and standard deviation.
+
+
+### Question 2.3-B-i
+
+Scaling the data before performing kmeans on the HTRU_2 dataset.Scaling is done because there are deviations between the column values.
+
+```{r}
+sc <- scale(HTRU_2data[,1:8])
+kmeans_HTRU_2 <- kmeans(sc,centers = 2)
+```
+
+```{r}
+fviz_cluster(kmeans_HTRU_2, data=sc, main="HTRU_2 dataset with 2 clusters")
+```
+
+### Question 2.3-B-ii
+
+The shapes of the graphs for kmeans and PCA are similar but the data points are inverted in the PCA model because we performed a pca rotation operation to interpret the results in 2 dimensions using a biplot.Kmeans clustering model did well by having most of the class 0 datas in cluster 1 and class 1 data points in cluster2.
+
+### Question 2.3-B-iii
+
+```{r}
+cat("Number of observations in each cluster are: ",kmeans_HTRU_2$size)
+```
+
+### Question 2.3-B-iv
+
+```{r}
+table(HTRU_2data[,9])
+```
+
+HTRU_2 dataset has 9041 observations of class 0 and 959 observations of class 1.
+
+### Question 2.3-B-v
+
+From the observed results above cluster 1 corresponds to majority cluster with class label 0 and cluster 2 corresponds to minority class with class label 1.
+
+### Question 2.3-B-vi
+
+```{r}
+names(kmeans_HTRU_2)
+km_1 <- which(kmeans_HTRU_2$cluster==1)
+```
+```{r}
+new_class_HTRU_2 <- HTRU_2data[km_1,]
+head(new_class_HTRU_2)
+```
+
+```{r}
+cat("Number of observations in large cluster that belong to class 1 are: ",sum(new_class_HTRU_2$class == "1"))
+```
+
+```{r}
+cat("Number of observations in large cluster that belong to class 0 are: ",sum(new_class_HTRU_2$class == "0"))
+```
+
+### Question 2.3-B-vii
+
+From the observed results the large cluster represents data points of class label 0.
+
+### Question 2.3-B-viii
+
+```{r}
+kmeans_HTRU_2
+```
+
+Kmeans clustering model explains 35.9% of the variance.
+
+### Question 2.3-B-ix
+
+
+```{r}
+stats_kmc <- cluster.stats(dist(sc),kmeans_HTRU_2$cluster)
+names(stats_kmc)
+```
+
+```{r}
+cat("Average Silhouette width for both clusters is :",stats_kmc$avg.silwidth)
+```
+
+### Question 2.3-B-x
+
+```{r}
+cat("Per cluster Silhouette width is :",stats_kmc$clus.avg.silwidths)
+```
+
+Based on the per cluster Silhouette width Cluster 1 is better since its value is close to 1.
+
+### Question 2.3-C-i
+
+```{r}
+pca_kms <- kmeans(pca$x[,1:2],centers = 2)
+fviz_cluster(pca_kms, data=pca$x[,1:2], main="pca dataset with 2 clusters")
+```
+
+The shapes of the plots in a(ii) and b(i) are similar but the plot in b(i) is ploted in different axis since other two plots are plotted using two axis which has higher variance.
+
+### Question 2.3-C-ii
+
+```{r}
+stats_pca_ss <- cluster.stats(dist(pca$x[,1:2]),pca_kms$cluster)
+names(stats_pca_ss)
+```
+
+```{r}
+cat("Average Silhouette width for both clusters is :",stats_pca_ss$avg.silwidth)
+```
+
+### Question 2.3-C-iii
+
+```{r}
+cat("Per cluster Silhouette width is :",stats_pca_ss$clus.avg.silwidths)
+```
+
+Based on the per cluster Silhouette width Cluster 1 is better since its value is close to 1.
+
+### Question 2.3-C-iv
+
+performing kmeans clustering with PCA1 and PCA2 vectors obtained higher Average Silhoutte width (0.649) and per cluster silhoutte width (0.704,0.229) than clustering the HTRU_2 dataset with all the attributes. The Average silhouette width obtained using HTRU_2 dataset in part b is (0.6001) and the per cluster silhouette width is (0.659,0.152) which is lower than the vaules obtained in part c using PCA vectors.Therefore,clustering with PCA vectors in part c obtained better results of silhouette with than the results obtained in part b.
+
