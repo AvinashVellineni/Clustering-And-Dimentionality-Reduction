@@ -1,1 +1,1 @@
-Clustering and Dimentionality Reduction (Principle Component Analysis).
+Clustering and Dimensionality Reduction (Principle Component Analysis).
